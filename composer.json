@@ -1,0 +1,14 @@
+{
+    "name": "otp/sdk-laravel",
+    "license": "",
+    "type": "library",
+    "description": "",
+    "authors": [
+        {
+            "name": "Quang Hung",
+            "email": "ngochung.quang.1310@gmail.com"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {}
+}
