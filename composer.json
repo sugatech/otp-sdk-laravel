@@ -1,14 +1,23 @@
 {
     "name": "otp/sdk-laravel",
-    "license": "",
+    "version": "20.0.0",
+    "license": "MIT",
     "type": "library",
     "description": "",
-    "authors": [
-        {
-            "name": "Quang Hung",
-            "email": "ngochung.quang.1310@gmail.com"
+    "minimum-stability": "stable",
+    "require": {
+        "php": ">=7.2",
+        "guzzlehttp/guzzle": "^6.3",
+        "illuminate/support": "~5.3|^6.0",
+        "illuminate/config": "~5.3|^6.0"
+    },
+    "require-dev": {
+        "mockery/mockery": "^1.0",
+        "phpunit/phpunit": "^8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "OTP\\SdkLaravel\\": "src"
         }
-    ],
-    "minimum-stability": "dev",
-    "require": {}
+    }
 }
