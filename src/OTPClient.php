@@ -1,6 +1,6 @@
 <?php
 
-namespace OTP\SdkLaravel;
+namespace SdkLaravel;
 use GuzzleHttp\Client;
 
 class OTPClient

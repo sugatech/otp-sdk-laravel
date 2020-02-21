@@ -1,6 +1,6 @@
 <?php
 
-namespace OTP\SdkLaravel;
+namespace SdkLaravel;
 
 use Illuminate\Support\ServiceProvider;
 
