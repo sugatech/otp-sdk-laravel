@@ -3,14 +3,26 @@
 namespace OTP\SdkLaravel;
 
 use Illuminate\Support\ServiceProvider;
-use OTPClient;
 
 class OTPServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->app->singleton('otp.client', function () {
-            return new OTPClient();
+        $this->mergeConfigFrom($this->configPath(), 'cors');
+
+        $this->app->singleton('otp.client', function ($app) {
+            $options = $app['config']->get('OTP');
+
+            if (isset($options['access_token'])) {
+                return new OTPClient($options['access_token']);
+            }
+
+            return new OTPClient(null);
         });
+    }
+
+    protected function configPath()
+    {
+        return __DIR__ . '/../config/otp.php';
     }
 }

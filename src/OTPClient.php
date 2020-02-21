@@ -15,9 +15,15 @@ class OTPClient
      */
     private $client;
 
-    public function __construct()
+    /**
+     * @var string
+     */
+    private $accessToken;
+
+    public function __construct($accessToken)
     {
         $this->client = new Client();
+        $this->accessToken = $accessToken;
     }
 
     public function login($grantType, $clientId, $clientSecret)
@@ -32,6 +38,23 @@ class OTPClient
                     'client_id' => $clientId,
                     'client_secret' => $clientSecret,
                 ]
+            ]
+        ]);
+
+        return $response->getBody();
+    }
+
+    public function sendSms($phoneNumber, $template, $background = 1)
+    {
+        $response = $this->client->get(self::API_URI.'/api/v1/logs', [
+            'headers' => [
+                'Content-Type' => 'application/json',
+                'Authorization' => $this->accessToken,
+            ],
+            'json' => [
+                'phone_number' => $phoneNumber,
+                'template' => $template,
+                'background' => $background,
             ]
         ]);
 
