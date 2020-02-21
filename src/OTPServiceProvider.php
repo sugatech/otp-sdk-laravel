@@ -8,7 +8,7 @@ class OTPServiceProvider extends ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom($this->configPath(), 'cors');
+        $this->mergeConfigFrom($this->configPath(), 'access_token');
 
         $this->app->singleton('otp.client', function ($app) {
             $options = $app['config']->get('OTP');

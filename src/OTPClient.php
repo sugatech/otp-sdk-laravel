@@ -46,7 +46,7 @@ class OTPClient
 
     public function sendSms($phoneNumber, $template, $background = 1)
     {
-        $response = $this->client->get(self::API_URI.'/api/v1/logs', [
+        $response = $this->client->post(self::API_URI.'/api/client/v1/sms', [
             'headers' => [
                 'Content-Type' => 'application/json',
                 'Authorization' => $this->accessToken,
