@@ -4,6 +4,7 @@ namespace OTP\SDK;
 
 use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
+use Illuminate\Support\Str;
 
 class OTPServiceProvider extends ServiceProvider
 {
@@ -27,8 +28,20 @@ class OTPServiceProvider extends ServiceProvider
         });
     }
 
+    public function boot()
+    {
+        if (!$this->isLumen()) {
+            $this->publishes([$this->configPath() => config_path('otp.php')]);
+        }
+    }
+
     protected function configPath()
     {
         return __DIR__ . '/../config/otp.php';
+    }
+
+    protected function isLumen()
+    {
+        return Str::contains($this->app->version(), 'Lumen');
     }
 }
