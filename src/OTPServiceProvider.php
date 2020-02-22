@@ -13,11 +13,11 @@ class OTPServiceProvider extends ServiceProvider
         $this->app->singleton('otp.client', function ($app) {
             $options = $app['config']->get('OTP');
 
-            if (isset($options['access_token'])) {
-                return new OTPClient($options['access_token']);
+            if (isset($options['access_token']) && isset($options['api_url'])) {
+                return new OTPClient($options['api_url'], $options['access_token']);
             }
 
-            return new OTPClient(null);
+            return new OTPClient(null,null);
         });
     }
 
