@@ -1,6 +1,6 @@
 <?php
 
 return [
-    'access_token' => env('ACCESS_TOKEN', ''),
-    'api_url' => env('OTP_API_URL', ''),
+    'api_url' => env('OTP_API_URL'),
+    'access_token' => env('OTP_ACCESS_TOKEN'),
 ];

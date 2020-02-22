@@ -1,23 +1,29 @@
 <?php
 
-namespace SdkLaravel;
+namespace OTP\SDK;
 
+use GuzzleHttp\Client;
 use Illuminate\Support\ServiceProvider;
 
 class OTPServiceProvider extends ServiceProvider
 {
     public function register()
     {
+        $this->mergeConfigFrom($this->configPath(), 'api_url');
         $this->mergeConfigFrom($this->configPath(), 'access_token');
 
         $this->app->singleton('otp.client', function ($app) {
-            $options = $app['config']->get('OTP');
+            $options = $app['config']->get('otp');
 
-            if (isset($options['access_token']) && isset($options['api_url'])) {
-                return new OTPClient($options['api_url'], $options['access_token']);
+            if (!isset($options['api_url'])) {
+                throw new \InvalidArgumentException('Not found api_urL config');
             }
 
-            return new OTPClient(null,null);
+            if (!isset($options['access_token'])) {
+                throw new \InvalidArgumentException('Not found access_token config');
+            }
+
+            return new OTPClient(app(Client::class), $options['api_url'], $options['access_token']);
         });
     }
 

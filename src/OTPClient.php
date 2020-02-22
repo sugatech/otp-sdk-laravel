@@ -1,7 +1,9 @@
 <?php
 
-namespace SdkLaravel;
+namespace OTP\SDK;
+
 use GuzzleHttp\Client;
+use GuzzleHttp\RequestOptions;
 
 class OTPClient
 {
@@ -20,37 +22,21 @@ class OTPClient
      */
     private $apiUrl;
 
-    public function __construct($apiUrl,$accessToken)
+    public function __construct($client, $apiUrl, $accessToken)
     {
-        $this->client = new Client();
+        $this->client = $client;
         $this->accessToken = $accessToken;
         $this->apiUrl = $apiUrl;
-    }
-
-    public function login($grantType, $clientId, $clientSecret)
-    {
-        $response = $this->client->post($this->apiUrl.'/oauth/token', [
-            'headers' => [
-                'Content-Type' => 'application/json',
-            ],
-            'json' => [
-                'grant_type' => $grantType,
-                'client_id' => $clientId,
-                'client_secret' => $clientSecret,
-            ]
-        ]);
-
-        return $response->getBody();
     }
 
     public function sendSms($phoneNumber, $template, $background = 1)
     {
         $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/sms', [
-            'headers' => [
+            RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
                 'Authorization' => $this->accessToken,
             ],
-            'json' => [
+            RequestOptions::JSON => [
                 'phone_number' => $phoneNumber,
                 'template' => $template,
                 'background' => $background,
@@ -63,11 +49,11 @@ class OTPClient
     public function sendMail($mail, $template, $background = 1)
     {
         $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/mail', [
-            'headers' => [
+            RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
                 'Authorization' => $this->accessToken,
             ],
-            'json' => [
+            RequestOptions::JSON => [
                 'mail' => $mail,
                 'template' => $template,
                 'background' => $background,
@@ -80,11 +66,11 @@ class OTPClient
     public function resendSms($phoneNumber, $template, $background = 1)
     {
         $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/sms/resend', [
-            'headers' => [
+            RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
                 'Authorization' => $this->accessToken,
             ],
-            'json' => [
+            RequestOptions::JSON => [
                 'phone_number' => $phoneNumber,
                 'template' => $template,
                 'background' => $background,
@@ -97,11 +83,11 @@ class OTPClient
     public function resendMail($mail, $template, $background = 1)
     {
         $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/mail/resend', [
-            'headers' => [
+            RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
                 'Authorization' => $this->accessToken,
             ],
-            'json' => [
+            RequestOptions::JSON => [
                 'mail' => $mail,
                 'template' => $template,
                 'background' => $background,
@@ -114,11 +100,11 @@ class OTPClient
     public function logs($page, $limit, $sort, $dir, $fromDate, $toDate, $isSuccess, $channel)
     {
         $response = $this->client->get($this->apiUrl.'/api/client/v1/logs', [
-            'headers' => [
+            RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
                 'Authorization' => $this->accessToken,
             ],
-            'json' => [
+            RequestOptions::JSON => [
                 'page' => $page,
                 'limit' => $limit,
                 'sort' => $sort,
