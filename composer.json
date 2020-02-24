@@ -4,7 +4,7 @@
     "license": "MIT",
     "type": "library",
     "description": "",
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "require": {
         "php": ">=7.2",
         "guzzlehttp/guzzle": "^6.3",
@@ -16,7 +16,8 @@
     },
     "autoload": {
         "psr-4": {
-            "OTP\\SdkLaravel\\": "src"
+            "OTP\\SDK\\": "src/"
         }
-    }
+    },
+    "prefer-stable": true
 }
