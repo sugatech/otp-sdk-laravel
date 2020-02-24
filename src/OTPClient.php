@@ -128,33 +128,17 @@ class OTPClient
     }
 
     /**
-     * @param int $page
-     * @param int $limit
-     * @param string $sort
-     * @param string $dir
-     * @param string $fromDate
-     * @param string $toDate
-     * @param bool $isSuccess
-     * @param string $channel
+     * @param array $params
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function logs($page, $limit, $sort, $dir, $fromDate, $toDate, $isSuccess, $channel)
+    public function logs($params = [])
     {
         $response = $this->client->get($this->apiUrl.'/api/client/v1/logs', [
             RequestOptions::HEADERS => [
                 'Content-Type' => 'application/json',
                 'Authorization' => $this->accessToken,
             ],
-            RequestOptions::JSON => [
-                'page' => $page,
-                'limit' => $limit,
-                'sort' => $sort,
-                'dir' => $dir,
-                'from_date' => $fromDate,
-                'to_date' => $toDate,
-                'is_success' => $isSuccess,
-                'channel' => $channel
-            ]
+            RequestOptions::JSON => $params
         ]);
 
         return $response->getBody();
