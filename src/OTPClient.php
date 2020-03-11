@@ -7,6 +7,8 @@ use GuzzleHttp\RequestOptions;
 
 class OTPClient
 {
+    const DEFAULT_TTL = 300;
+
     /**
      * @var Client
      */
@@ -42,7 +44,7 @@ class OTPClient
      * @param int $ttl
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function sendSms($phoneNumber, $template, $background = true, $ttl = 300)
+    public function sendSms($phoneNumber, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
         $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/sms', [
             RequestOptions::HEADERS => [
@@ -67,7 +69,7 @@ class OTPClient
      * @param int $ttl
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function sendMail($mail, $template, $background = true, $ttl = 300)
+    public function sendMail($mail, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
         $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/mail', [
             RequestOptions::HEADERS => [
