@@ -39,9 +39,10 @@ class OTPClient
      * @param string $phoneNumber
      * @param string $template
      * @param bool $background
+     * @param int $ttl
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function sendSms($phoneNumber, $template, $background = true)
+    public function sendSms($phoneNumber, $template, $background = true, $ttl = 300)
     {
         $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/sms', [
             RequestOptions::HEADERS => [
@@ -52,6 +53,7 @@ class OTPClient
                 'phone_number' => $phoneNumber,
                 'template' => $template,
                 'background' => $background,
+                'ttl' => $ttl,
             ]
         ]);
 
@@ -62,9 +64,10 @@ class OTPClient
      * @param string $mail
      * @param string $template
      * @param bool $background
+     * @param int $ttl
      * @return \Psr\Http\Message\StreamInterface
      */
-    public function sendMail($mail, $template, $background = true)
+    public function sendMail($mail, $template, $background = true, $ttl = 300)
     {
         $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/mail', [
             RequestOptions::HEADERS => [
@@ -75,6 +78,7 @@ class OTPClient
                 'mail' => $mail,
                 'template' => $template,
                 'background' => $background,
+                'ttl' => $ttl,
             ]
         ]);
 
@@ -139,6 +143,27 @@ class OTPClient
                 'Authorization' => $this->accessToken,
             ],
             RequestOptions::JSON => $params
+        ]);
+
+        return $response->getBody();
+    }
+
+    /**
+     * @param int $id
+     * @param string $code
+     * @return \Psr\Http\Message\StreamInterface
+     */
+    public function check($id, $code)
+    {
+        $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/check', [
+            RequestOptions::HEADERS => [
+                'Content-Type' => 'application/json',
+                'Authorization' => $this->accessToken,
+            ],
+            RequestOptions::JSON => [
+                'id' => $id,
+                'otp_code' => $code,
+            ]
         ]);
 
         return $response->getBody();
