@@ -42,7 +42,7 @@ class OTPClient
      * @param string $template
      * @param bool $background
      * @param int $ttl
-     * @return \Psr\Http\Message\StreamInterface
+     * @return bool
      */
     public function sendSms($phoneNumber, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
@@ -59,7 +59,7 @@ class OTPClient
             ]
         ]);
 
-        return $response->getBody();
+        return $response->getStatusCode() === 200;
     }
 
     /**
@@ -67,7 +67,7 @@ class OTPClient
      * @param string $template
      * @param bool $background
      * @param int $ttl
-     * @return \Psr\Http\Message\StreamInterface
+     * @return bool
      */
     public function sendMail($mail, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
@@ -84,14 +84,14 @@ class OTPClient
             ]
         ]);
 
-        return $response->getBody();
+        return $response->getStatusCode() === 200;
     }
 
     /**
      * @param string $phoneNumber
      * @param string $template
      * @param bool $background
-     * @return \Psr\Http\Message\StreamInterface
+     * @return bool
      */
     public function resendSms($phoneNumber, $template, $background = true)
     {
@@ -107,14 +107,14 @@ class OTPClient
             ]
         ]);
 
-        return $response->getBody();
+        return $response->getStatusCode() === 200;
     }
 
     /**
      * @param string $mail
      * @param string $template
      * @param bool $background
-     * @return \Psr\Http\Message\StreamInterface
+     * @return bool
      */
     public function resendMail($mail, $template, $background = true)
     {
@@ -130,12 +130,12 @@ class OTPClient
             ]
         ]);
 
-        return $response->getBody();
+        return $response->getStatusCode() === 200;
     }
 
     /**
      * @param array $params
-     * @return \Psr\Http\Message\StreamInterface
+     * @return object[]
      */
     public function logs($params = [])
     {
@@ -153,7 +153,7 @@ class OTPClient
     /**
      * @param int $id
      * @param string $code
-     * @return \Psr\Http\Message\StreamInterface
+     * @return bool
      */
     public function check($id, $code)
     {
@@ -168,6 +168,22 @@ class OTPClient
             ]
         ]);
 
-        return $response->getBody();
+        return $response->getStatusCode() === 200;
+    }
+
+    /**
+     * @param string $key
+     * @return bool
+     */
+    public function delete($key)
+    {
+        $response = $this->client->delete($this->apiUrl.'/api/client/v1/otp/'.$key, [
+            RequestOptions::HEADERS => [
+                'Content-Type' => 'application/json',
+                'Authorization' => $this->accessToken,
+            ]
+        ]);
+
+        return $response->getStatusCode() === 200;
     }
 }
