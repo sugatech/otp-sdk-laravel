@@ -2,7 +2,6 @@
 
 namespace OTP\SDK;
 
-use GuzzleHttp\Client;
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider;
 
@@ -23,7 +22,7 @@ class OTPServiceProvider extends ServiceProvider
                 throw new \InvalidArgumentException('Not found access_token config');
             }
 
-            return new OTPClient(app(Client::class), $options['api_url'], $options['access_token']);
+            return new OTPClient($options['api_url'], $options['access_token']);
         });
     }
 

@@ -2,17 +2,12 @@
 
 namespace OTP\SDK;
 
-use GuzzleHttp\Client;
-use GuzzleHttp\RequestOptions;
+use Zttp\PendingZttpRequest;
+use Zttp\Zttp;
 
 class OTPClient
 {
     const DEFAULT_TTL = 300;
-
-    /**
-     * @var Client
-     */
-    private $client;
 
     /**
      * @var string
@@ -26,15 +21,33 @@ class OTPClient
 
     /**
      * OTPClient constructor.
-     * @param Client $client
      * @param string $apiUrl
      * @param string $accessToken
      */
-    public function __construct($client, $apiUrl, $accessToken)
+    public function __construct($apiUrl, $accessToken)
     {
-        $this->client = $client;
         $this->accessToken = $accessToken;
         $this->apiUrl = $apiUrl;
+    }
+
+    /**
+     * @return PendingZttpRequest
+     */
+    private function request()
+    {
+        return Zttp::withHeaders([
+            'Authorization' => 'Bearer ' . $this->accessToken,
+        ])
+            ->withoutVerifying();
+    }
+
+    /**
+     * @param string $route
+     * @return string
+     */
+    private function getUrl($route)
+    {
+        return $this->apiUrl . '/api/client/v1' . $route;
     }
 
     /**
@@ -46,20 +59,16 @@ class OTPClient
      */
     public function sendSms($phoneNumber, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
-        $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/sms', [
-            RequestOptions::HEADERS => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $this->accessToken,
-            ],
-            RequestOptions::JSON => [
-                'phone_number' => $phoneNumber,
-                'template' => $template,
-                'background' => $background,
-                'ttl' => $ttl,
-            ]
-        ]);
-
-        return $response->getStatusCode() === 200;
+        return $this->request()
+            ->asJson()
+            ->post($this->getUrl('/otp/sms'),
+                [
+                    'phone_number' => $phoneNumber,
+                    'template' => $template,
+                    'background' => $background,
+                    'ttl' => $ttl,
+                ])
+            ->isSuccess();
     }
 
     /**
@@ -71,20 +80,16 @@ class OTPClient
      */
     public function sendMail($mail, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
-        $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/mail', [
-            RequestOptions::HEADERS => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $this->accessToken,
-            ],
-            RequestOptions::JSON => [
-                'mail' => $mail,
-                'template' => $template,
-                'background' => $background,
-                'ttl' => $ttl,
-            ]
-        ]);
-
-        return $response->getStatusCode() === 200;
+        return $this->request()
+            ->asJson()
+            ->post($this->getUrl('/otp/mail'),
+                [
+                    'mail' => $mail,
+                    'template' => $template,
+                    'background' => $background,
+                    'ttl' => $ttl,
+                ])
+            ->isSuccess();
     }
 
     /**
@@ -95,19 +100,15 @@ class OTPClient
      */
     public function resendSms($phoneNumber, $template, $background = true)
     {
-        $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/sms/resend', [
-            RequestOptions::HEADERS => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $this->accessToken,
-            ],
-            RequestOptions::JSON => [
-                'phone_number' => $phoneNumber,
-                'template' => $template,
-                'background' => $background,
-            ]
-        ]);
-
-        return $response->getStatusCode() === 200;
+        return $this->request()
+            ->asJson()
+            ->post($this->getUrl('/otp/sms/resend'),
+                [
+                    'phone_number' => $phoneNumber,
+                    'template' => $template,
+                    'background' => $background,
+                ])
+            ->isSuccess();
     }
 
     /**
@@ -118,19 +119,15 @@ class OTPClient
      */
     public function resendMail($mail, $template, $background = true)
     {
-        $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/mail/resend', [
-            RequestOptions::HEADERS => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $this->accessToken,
-            ],
-            RequestOptions::JSON => [
-                'mail' => $mail,
-                'template' => $template,
-                'background' => $background,
-            ]
-        ]);
-
-        return $response->getStatusCode() === 200;
+        return $this->request()
+            ->asJson()
+            ->post($this->getUrl('/otp/mail/resend'),
+                [
+                    'mail' => $mail,
+                    'template' => $template,
+                    'background' => $background,
+                ])
+            ->isSuccess();
     }
 
     /**
@@ -139,36 +136,27 @@ class OTPClient
      */
     public function logs($params = [])
     {
-        $response = $this->client->get($this->apiUrl.'/api/client/v1/logs', [
-            RequestOptions::HEADERS => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $this->accessToken,
-            ],
-            RequestOptions::JSON => $params
-        ]);
-
-        return $response->getBody();
+        return $this->request()
+            ->asJson()
+            ->get($this->getUrl('/logs'), $params)
+            ->body();
     }
 
     /**
-     * @param int $id
+     * @param string $id
      * @param string $code
      * @return bool
      */
     public function check($id, $code)
     {
-        $response = $this->client->post($this->apiUrl.'/api/client/v1/otp/check', [
-            RequestOptions::HEADERS => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $this->accessToken,
-            ],
-            RequestOptions::JSON => [
-                'id' => $id,
-                'otp_code' => $code,
-            ]
-        ]);
-
-        return $response->getStatusCode() === 200;
+        return $this->request()
+            ->asJson()
+            ->post($this->getUrl('/otp/check'),
+                [
+                    'id' => $id,
+                    'otp_code' => $code,
+                ])
+            ->isSuccess();
     }
 
     /**
@@ -177,13 +165,9 @@ class OTPClient
      */
     public function delete($key)
     {
-        $response = $this->client->delete($this->apiUrl.'/api/client/v1/otp/'.$key, [
-            RequestOptions::HEADERS => [
-                'Content-Type' => 'application/json',
-                'Authorization' => $this->accessToken,
-            ]
-        ]);
-
-        return $response->getStatusCode() === 200;
+        return $this->request()
+            ->asJson()
+            ->delete($this->getUrl('/otp/'.$key))
+            ->isSuccess();
     }
 }
