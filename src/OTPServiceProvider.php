@@ -4,6 +4,7 @@ namespace OTP\SDK;
 
 use Illuminate\Foundation\Application as LaravelApplication;
 use Illuminate\Support\ServiceProvider;
+use Laravel\Lumen\Application as LumenApplication;
 
 class OTPServiceProvider extends ServiceProvider
 {
@@ -18,11 +19,7 @@ class OTPServiceProvider extends ServiceProvider
                 throw new \InvalidArgumentException('Not found api_urL config');
             }
 
-            if (!isset($options['access_token'])) {
-                throw new \InvalidArgumentException('Not found access_token config');
-            }
-
-            return new OTPClient($options['api_url'], $options['access_token']);
+            return new OTPClient($options['api_url']);
         });
     }
 
