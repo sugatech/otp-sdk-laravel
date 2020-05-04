@@ -14,7 +14,7 @@ class OTPClient
     /**
      * @var OAuthClient
      */
-    private $oauth;
+    private $oauthClient;
 
     /**
      * @var string
@@ -27,7 +27,7 @@ class OTPClient
      */
     public function __construct($apiUrl)
     {
-        $this->oauth = new OAuthClient(
+        $this->oauthClient = new OAuthClient(
             config('otp.oauth.url'),
             config('otp.oauth.client_id'),
             config('otp.oauth.client_secret')
@@ -42,14 +42,14 @@ class OTPClient
     private function request($handler)
     {
         $request = Zttp::withHeaders([
-            'Authorization' => 'Bearer ' . $this->oauth->getAccessToken(),
+            'Authorization' => 'Bearer ' . $this->oauthClient->getAccessToken(),
         ])
             ->withoutVerifying();
 
         $response = $handler($request);
 
         if ($response->status() == 401) {
-            $this->oauth->getAccessToken(true);
+            $this->oauthClient->getAccessToken(true);
         }
 
         return $response;
