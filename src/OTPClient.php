@@ -2,17 +2,19 @@
 
 namespace OTP\SDK;
 
+use PassportClientCredentials\OAuthClient;
 use Zttp\PendingZttpRequest;
 use Zttp\Zttp;
+use Zttp\ZttpResponse;
 
 class OTPClient
 {
     const DEFAULT_TTL = 300;
 
     /**
-     * @var string
+     * @var OAuthClient
      */
-    private $accessToken;
+    private $oauthClient;
 
     /**
      * @var string
@@ -22,23 +24,35 @@ class OTPClient
     /**
      * OTPClient constructor.
      * @param string $apiUrl
-     * @param string $accessToken
      */
-    public function __construct($apiUrl, $accessToken)
+    public function __construct($apiUrl)
     {
-        $this->accessToken = $accessToken;
+        $this->oauthClient = new OAuthClient(
+            config('otp.oauth.url'),
+            config('otp.oauth.client_id'),
+            config('otp.oauth.client_secret')
+        );
         $this->apiUrl = $apiUrl;
     }
 
     /**
-     * @return PendingZttpRequest
+     * @param callable $handler
+     * @return ZttpResponse
      */
-    private function request()
+    private function request($handler)
     {
-        return Zttp::withHeaders([
-            'Authorization' => 'Bearer ' . $this->accessToken,
+        $request = Zttp::withHeaders([
+            'Authorization' => 'Bearer ' . $this->oauthClient->getAccessToken(),
         ])
             ->withoutVerifying();
+
+        $response = $handler($request);
+
+        if ($response->status() == 401) {
+            $this->oauthClient->getAccessToken(true);
+        }
+
+        return $response;
     }
 
     /**
@@ -59,15 +73,17 @@ class OTPClient
      */
     public function sendSms($phoneNumber, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
-        return $this->request()
-            ->asJson()
-            ->post($this->getUrl('/otp/sms'),
-                [
-                    'phone_number' => $phoneNumber,
-                    'template' => $template,
-                    'background' => $background,
-                    'ttl' => $ttl,
-                ])
+        $params = [
+            'phone_number' => $phoneNumber,
+            'template' => $template,
+            'background' => $background,
+            'ttl' => $ttl,
+        ];
+
+        return $this->request(function (PendingZttpRequest $request) use ($params) {
+            return $request->asJson()
+                ->post($this->getUrl('/otp/sms'), $params);
+        })
             ->isSuccess();
     }
 
@@ -80,15 +96,17 @@ class OTPClient
      */
     public function sendMail($mail, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
-        return $this->request()
-            ->asJson()
-            ->post($this->getUrl('/otp/mail'),
-                [
-                    'mail' => $mail,
-                    'template' => $template,
-                    'background' => $background,
-                    'ttl' => $ttl,
-                ])
+        $params = [
+            'mail' => $mail,
+            'template' => $template,
+            'background' => $background,
+            'ttl' => $ttl,
+        ];
+
+        return $this->request(function (PendingZttpRequest $request) use ($params) {
+            return $request->asJson()
+                ->post($this->getUrl('/otp/mail'), $params);
+        })
             ->isSuccess();
     }
 
@@ -100,14 +118,16 @@ class OTPClient
      */
     public function resendSms($phoneNumber, $template, $background = true)
     {
-        return $this->request()
-            ->asJson()
-            ->post($this->getUrl('/otp/sms/resend'),
-                [
-                    'phone_number' => $phoneNumber,
-                    'template' => $template,
-                    'background' => $background,
-                ])
+        $params = [
+            'phone_number' => $phoneNumber,
+            'template' => $template,
+            'background' => $background,
+        ];
+
+        return $this->request(function (PendingZttpRequest $request) use ($params) {
+            return $request->asJson()
+                ->post($this->getUrl('/otp/sms/resend'), $params);
+        })
             ->isSuccess();
     }
 
@@ -119,27 +139,30 @@ class OTPClient
      */
     public function resendMail($mail, $template, $background = true)
     {
-        return $this->request()
-            ->asJson()
-            ->post($this->getUrl('/otp/mail/resend'),
-                [
-                    'mail' => $mail,
-                    'template' => $template,
-                    'background' => $background,
-                ])
+        $params = [
+            'mail' => $mail,
+            'template' => $template,
+            'background' => $background,
+        ];
+
+        return $this->request(function (PendingZttpRequest $request) use ($params) {
+            return $request->asJson()
+                ->post($this->getUrl('/otp/mail/resend'), $params);
+        })
             ->isSuccess();
     }
 
     /**
      * @param array $params
-     * @return object[]
+     * @return array[]
      */
     public function logs($params = [])
     {
-        return $this->request()
-            ->asJson()
-            ->get($this->getUrl('/logs'), $params)
-            ->body();
+        return $this->request(function (PendingZttpRequest $request) use ($params) {
+            return $request->asJson()
+                ->get($this->getUrl('/logs'), $params);
+        })
+            ->json();
     }
 
     /**
@@ -149,13 +172,15 @@ class OTPClient
      */
     public function check($id, $code)
     {
-        return $this->request()
-            ->asJson()
-            ->post($this->getUrl('/otp/check'),
-                [
-                    'id' => $id,
-                    'otp_code' => $code,
-                ])
+        $params = [
+            'id' => $id,
+            'otp_code' => $code,
+        ];
+
+        return $this->request(function (PendingZttpRequest $request) use ($params) {
+            return $request->asJson()
+                ->post($this->getUrl('/otp/check'), $params);
+        })
             ->isSuccess();
     }
 
@@ -165,9 +190,10 @@ class OTPClient
      */
     public function delete($key)
     {
-        return $this->request()
-            ->asJson()
-            ->delete($this->getUrl('/otp/'.$key))
+        return $this->request(function (PendingZttpRequest $request) use ($key) {
+            return $request->asJson()
+                ->delete($this->getUrl('/otp/' . $key));
+        })
             ->isSuccess();
     }
 }
