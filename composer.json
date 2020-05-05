@@ -1,6 +1,6 @@
 {
     "name": "sugatech/otp-sdk-laravel",
-    "version": "20.0.7",
+    "version": "20.1.0",
     "license": "MIT",
     "type": "library",
     "description": "OTP Service SDK for Laravel and Lumen",
@@ -9,7 +9,8 @@
         "php": ">=7.2",
         "illuminate/support": "~5.3|^6.0|^7.0",
         "illuminate/config": "~5.3|^6.0|^7.0",
-        "kitetail/zttp": "^0.6.0"
+        "kitetail/zttp": "^0.6.0",
+        "sugatech/oauth2-client-credentials-laravel": "^20.0"
     },
     "require-dev": {
         "phpunit/phpunit": "^8.0"
