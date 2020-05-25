@@ -16,7 +16,7 @@ class OTPServiceProvider extends ServiceProvider
             $options = $app['config']->get('otp');
 
             if (!isset($options['api_url'])) {
-                throw new \InvalidArgumentException('Not found api_urL config');
+                throw new \InvalidArgumentException('Not found api_url config');
             }
 
             return new OTPClient($options['api_url']);

@@ -166,14 +166,14 @@ class OTPClient
     }
 
     /**
-     * @param string $id
+     * @param string $verifiable
      * @param string $code
      * @return bool
      */
-    public function check($id, $code)
+    public function check($verifiable, $code)
     {
         $params = [
-            'id' => $id,
+            'verifiable' => $verifiable,
             'otp_code' => $code,
         ];
 
@@ -185,14 +185,14 @@ class OTPClient
     }
 
     /**
-     * @param string $key
+     * @param string $verifiable
      * @return bool
      */
-    public function delete($key)
+    public function delete($verifiable)
     {
-        return $this->request(function (PendingZttpRequest $request) use ($key) {
+        return $this->request(function (PendingZttpRequest $request) use ($verifiable) {
             return $request->asJson()
-                ->delete($this->getUrl('/otp/' . $key));
+                ->delete($this->getUrl('/otp/' . $verifiable));
         })
             ->isSuccess();
     }
