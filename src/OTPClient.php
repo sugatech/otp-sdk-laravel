@@ -111,48 +111,6 @@ class OTPClient
     }
 
     /**
-     * @param string $phoneNumber
-     * @param string $template
-     * @param bool $background
-     * @return bool
-     */
-    public function resendSms($phoneNumber, $template, $background = true)
-    {
-        $params = [
-            'phone_number' => $phoneNumber,
-            'template' => $template,
-            'background' => $background,
-        ];
-
-        return $this->request(function (PendingZttpRequest $request) use ($params) {
-            return $request->asJson()
-                ->post($this->getUrl('/otp/sms/resend'), $params);
-        })
-            ->isSuccess();
-    }
-
-    /**
-     * @param string $mail
-     * @param string $template
-     * @param bool $background
-     * @return bool
-     */
-    public function resendMail($mail, $template, $background = true)
-    {
-        $params = [
-            'mail' => $mail,
-            'template' => $template,
-            'background' => $background,
-        ];
-
-        return $this->request(function (PendingZttpRequest $request) use ($params) {
-            return $request->asJson()
-                ->post($this->getUrl('/otp/mail/resend'), $params);
-        })
-            ->isSuccess();
-    }
-
-    /**
      * @param array $params
      * @return array[]
      */
