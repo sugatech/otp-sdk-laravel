@@ -10,6 +10,7 @@
         "illuminate/support": "~5.3|^6.0|^7.0",
         "illuminate/config": "~5.3|^6.0|^7.0",
         "illuminate/http": "^6.0|^7.0",
+        "guzzlehttp/guzzle": "^6.0|^7.0",
         "sugatech/oauth2-client-credentials-laravel": "^20.1"
     },
     "require-dev": {
