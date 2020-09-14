@@ -1,6 +1,6 @@
 {
     "name": "sugatech/otp-sdk-laravel",
-    "version": "20.4.0",
+    "version": "20.5.0",
     "license": "MIT",
     "type": "library",
     "description": "OTP Service SDK for Laravel and Lumen",
