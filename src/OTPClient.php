@@ -2,10 +2,10 @@
 
 namespace OTP\SDK;
 
+use Illuminate\Http\Client\PendingRequest;
+use Illuminate\Http\Client\Response;
+use Illuminate\Support\Facades\Http;
 use OAuth2ClientCredentials\OAuthClient;
-use Zttp\PendingZttpRequest;
-use Zttp\Zttp;
-use Zttp\ZttpResponse;
 
 class OTPClient
 {
@@ -37,11 +37,11 @@ class OTPClient
 
     /**
      * @param callable $handler
-     * @return ZttpResponse
+     * @return Response
      */
     private function request($handler)
     {
-        $request = Zttp::withHeaders([
+        $request = Http::withHeaders([
             'Authorization' => 'Bearer ' . $this->oauthClient->getAccessToken(),
         ])
             ->withoutVerifying();
@@ -80,11 +80,11 @@ class OTPClient
             'ttl' => $ttl,
         ];
 
-        return $this->request(function (PendingZttpRequest $request) use ($params) {
+        return $this->request(function (PendingRequest $request) use ($params) {
             return $request->asJson()
                 ->post($this->getUrl('/otp/sms'), $params);
         })
-            ->isSuccess();
+            ->successful();
     }
 
     /**
@@ -103,11 +103,11 @@ class OTPClient
             'ttl' => $ttl,
         ];
 
-        return $this->request(function (PendingZttpRequest $request) use ($params) {
+        return $this->request(function (PendingRequest $request) use ($params) {
             return $request->asJson()
                 ->post($this->getUrl('/otp/mail'), $params);
         })
-            ->isSuccess();
+            ->successful();
     }
 
     /**
@@ -116,7 +116,7 @@ class OTPClient
      */
     public function logs($params = [])
     {
-        return $this->request(function (PendingZttpRequest $request) use ($params) {
+        return $this->request(function (PendingRequest $request) use ($params) {
             return $request->asJson()
                 ->get($this->getUrl('/logs'), $params);
         })
@@ -135,11 +135,11 @@ class OTPClient
             'otp_code' => $code,
         ];
 
-        return $this->request(function (PendingZttpRequest $request) use ($params) {
+        return $this->request(function (PendingRequest $request) use ($params) {
             return $request->asJson()
                 ->post($this->getUrl('/otp/check'), $params);
         })
-            ->isSuccess();
+            ->successful();
     }
 
     /**
@@ -148,10 +148,10 @@ class OTPClient
      */
     public function delete($verifiable)
     {
-        return $this->request(function (PendingZttpRequest $request) use ($verifiable) {
+        return $this->request(function (PendingRequest $request) use ($verifiable) {
             return $request->asJson()
                 ->delete($this->getUrl('/otp/' . $verifiable));
         })
-            ->isSuccess();
+            ->successful();
     }
 }
