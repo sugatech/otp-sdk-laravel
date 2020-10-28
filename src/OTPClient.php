@@ -38,6 +38,7 @@ class OTPClient
     /**
      * @param callable $handler
      * @return Response
+     * @throws \Illuminate\Http\Client\RequestException
      */
     private function request($handler)
     {
@@ -70,6 +71,7 @@ class OTPClient
      * @param bool $background
      * @param int $ttl
      * @return bool
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function sendSms($phoneNumber, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
@@ -93,6 +95,7 @@ class OTPClient
      * @param bool $background
      * @param int $ttl
      * @return bool
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function sendMail($mail, $template, $background = true, $ttl = self::DEFAULT_TTL)
     {
@@ -113,6 +116,7 @@ class OTPClient
     /**
      * @param array $params
      * @return array[]
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function logs($params = [])
     {
@@ -127,6 +131,7 @@ class OTPClient
      * @param string $verifiable
      * @param string $code
      * @return bool
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function check($verifiable, $code)
     {
@@ -145,6 +150,7 @@ class OTPClient
     /**
      * @param string $verifiable
      * @return bool
+     * @throws \Illuminate\Http\Client\RequestException
      */
     public function delete($verifiable)
     {
