@@ -118,11 +118,11 @@ class OTPClient
      * @return array[]
      * @throws \Illuminate\Http\Client\RequestException
      */
-    public function logs($params = [])
+    public function verifications($params = [])
     {
         return $this->request(function (PendingRequest $request) use ($params) {
             return $request->asJson()
-                ->get($this->getUrl('/logs'), $params);
+                ->get($this->getUrl('/verifications'), $params);
         })
             ->json();
     }
@@ -143,20 +143,6 @@ class OTPClient
         return $this->request(function (PendingRequest $request) use ($params) {
             return $request->asJson()
                 ->post($this->getUrl('/otp/check'), $params);
-        })
-            ->successful();
-    }
-
-    /**
-     * @param string $verifiable
-     * @return bool
-     * @throws \Illuminate\Http\Client\RequestException
-     */
-    public function delete($verifiable)
-    {
-        return $this->request(function (PendingRequest $request) use ($verifiable) {
-            return $request->asJson()
-                ->delete($this->getUrl('/otp/' . $verifiable));
         })
             ->successful();
     }
