@@ -9,7 +9,7 @@ use OAuth2ClientCredentials\OAuthClient;
 
 class OTPClient
 {
-    const DEFAULT_TTL = 300;
+    public const DEFAULT_TTL = 300;
 
     /**
      * @var OAuthClient
@@ -143,6 +143,32 @@ class OTPClient
         return $this->request(function (PendingRequest $request) use ($params) {
             return $request->asJson()
                 ->post($this->getUrl('/otp/check'), $params);
+        })
+            ->successful();
+    }
+
+        /**
+     * @param string $phoneNumber
+     * @param string $sms
+     * @param string|null $locale
+     * @param bool $background
+     * @param int $ttl
+     * @return bool
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function sendVoiceCall($phoneNumber, $sms, $locale = null, $background = true, $ttl = self::DEFAULT_TTL)
+    {
+        $params = [
+            'phone_number' => $phoneNumber,
+            'sms' => $sms,
+            'locale' => $locale,
+            'background' => $background,
+            'ttl' => $ttl,
+        ];
+
+        return $this->request(function (PendingRequest $request) use ($params) {
+            return $request->asJson()
+                ->post($this->getUrl('/otp/voice-call'), $params);
         })
             ->successful();
     }
