@@ -170,4 +170,33 @@ class OTPClient
         })
             ->successful();
     }
+
+    /**
+     * @param string $phoneNumber
+     * @param string $templateId
+     * @param array $templateData
+     * @param string|null $smsMessageTemplate
+     * @param string|null $locale
+     * @param bool $background
+     * @param int $ttl
+     * @return bool
+     * @throws \Illuminate\Http\Client\RequestException
+     */
+    public function sendZns($phoneNumber, $templateId, $templateData, $smsTemplate = null, $background = true, $ttl = self::DEFAULT_TTL)
+    {
+        $params = [
+            'phone_number' => $phoneNumber,
+            'template_id' => $templateId,
+            'template_data' => $templateData,
+            'sms_template' => $smsTemplate,
+            'background' => $background,
+            'ttl' => $ttl,
+        ];
+
+        return $this->request(function (PendingRequest $request) use ($params) {
+            return $request->asJson()
+                ->post($this->getUrl('/otp/zns'), $params);
+        })
+            ->successful();
+    }
 }
